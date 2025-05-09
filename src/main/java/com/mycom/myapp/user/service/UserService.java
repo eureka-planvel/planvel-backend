@@ -1,5 +1,8 @@
 package com.mycom.myapp.user.service;
 
-public interface UserService {
+import com.mycom.myapp.user.dto.UserDto;
+import com.mycom.myapp.user.dto.UserResultDto;
 
+public interface UserService {
+	UserResultDto insertUser(UserDto userDto);
 }
