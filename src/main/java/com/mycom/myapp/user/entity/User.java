@@ -21,7 +21,10 @@ public class User {
 	private int id;
 	
 	private String name;
+	
+	@Column(unique = true)
 	private String email;
+	
 	private String password;
 	
 	@Column(name="profile_img", insertable = false)
