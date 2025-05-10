@@ -27,6 +27,6 @@ public class User {
 	
 	private String password;
 	
-	@Column(name="profile_img", insertable = false)
+	@Column(name="profile_img")
 	private String profileImg;
 }

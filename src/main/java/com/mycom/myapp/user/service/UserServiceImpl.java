@@ -29,7 +29,9 @@ public class UserServiceImpl implements UserService{
 	    user.setEmail(userRegisterRequestDto.getEmail());
 	    String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword()); 
 	    user.setPassword(encodedPassword);
-
+	    if (userRegisterRequestDto.getProfileImg() == null) {
+	        user.setProfileImg("noProfile.png");
+	    }
 	    userRepository.save(user);
 
 	    return true;

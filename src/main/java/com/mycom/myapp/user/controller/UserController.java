@@ -20,17 +20,17 @@ public class UserController {
 	private final UserService userService;
 
 	@PostMapping("/register")
-	public ResponseEntity insertUser(@RequestBody UserRegisterRequestDto userRegisterRequestDto) {
+	public ResponseEntity<Boolean> insertUser(@RequestBody UserRegisterRequestDto userRegisterRequestDto) {
 	    try {
 	        boolean result = userService.insertUser(userRegisterRequestDto);
 	        return ResponseEntity.ok(result);
 	    } catch (Exception e) {
-	        return ResponseEntity.status(500).body("회원가입 중 오류 발생");
+	        return ResponseEntity.status(500).body(false);
 	    }
 	}
 
 	@GetMapping("/email-check")
-	public ResponseEntity checkEmailDuplicate(@RequestParam("email") String email) {
+	public ResponseEntity<Boolean> checkEmailDuplicate(@RequestParam("email") String email) {
 	    boolean isDuplicate = userService.isEmailDuplicate(email);
 	    return ResponseEntity.ok(!isDuplicate);
 	}
