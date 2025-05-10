@@ -1,12 +1,9 @@
 package com.mycom.myapp.user.service;
 
-import java.util.Optional;
-
-import com.mycom.myapp.user.dto.UserRegisterRequestDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.mycom.myapp.user.dto.UserRegisterResponseDto;
+import com.mycom.myapp.user.dto.UserRegisterRequestDto;
 import com.mycom.myapp.user.entity.User;
 import com.mycom.myapp.user.repository.UserRepository;
 
@@ -19,29 +16,30 @@ public class UserServiceImpl implements UserService{
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
-	
 	@Override
-	public UserRegisterResponseDto insertUser(UserRegisterRequestDto userRegisterRequestDto) {
-	    Optional<User> existingUser = userRepository.findByEmail(userRegisterRequestDto.getEmail());
-	    if (existingUser.isPresent()) {
-	        throw new IllegalArgumentException("이미 사용 중인 이메일입니다.");
+	public boolean insertUser(UserRegisterRequestDto userRegisterRequestDto) {
+	    
+		if (userRepository.findByEmail(userRegisterRequestDto.getEmail()).isPresent()) {
+	        return false;
 	    }
-
+		
 	    User user = new User();
+	    
 	    user.setName(userRegisterRequestDto.getName());
 	    user.setEmail(userRegisterRequestDto.getEmail());
-
 	    String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword());
 	    user.setPassword(encodedPassword);
+	    if (userRegisterRequestDto.getProfileImg() == null) {
+	        user.setProfileImg("noProfile.png");
+	    }
+	    userRepository.save(user);
 
-	    User savedUser = userRepository.save(user);
+	    return true;
+	}
 
-	    return UserRegisterResponseDto.builder()
-	        .id(savedUser.getId())
-	        .name(savedUser.getName())
-	        .email(savedUser.getEmail())
-	        .profileImg(savedUser.getProfileImg())
-	        .build();
+	@Override
+	public boolean isEmailDuplicate(String email) {
+		return userRepository.findByEmail(email).isPresent();
 	}
 }
 
