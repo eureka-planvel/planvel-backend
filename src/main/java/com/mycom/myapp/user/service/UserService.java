@@ -1,8 +1,8 @@
 package com.mycom.myapp.user.service;
 
-import com.mycom.myapp.user.dto.UserRegisterDto;
-import com.mycom.myapp.user.dto.UserRegisterResponseDto;
+import com.mycom.myapp.user.dto.UserRegisterRequestDto;
 
 public interface UserService {
-	UserRegisterResponseDto insertUser(UserRegisterDto userRegisterDto);
+	boolean insertUser(UserRegisterRequestDto userRegisterRequestDto);
+	boolean isEmailDuplicate(String email);
 }
