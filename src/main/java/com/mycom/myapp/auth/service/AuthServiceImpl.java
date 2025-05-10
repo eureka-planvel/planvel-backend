@@ -4,6 +4,7 @@ import com.mycom.myapp.auth.dto.request.LoginRequestDto;
 import com.mycom.myapp.auth.dto.response.LoginResponseDto;
 import com.mycom.myapp.user.entity.User;
 import com.mycom.myapp.user.repository.UserRepository;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,7 +18,7 @@ public class AuthServiceImpl implements AuthService {
 
 
     @Override
-    public LoginResponseDto login(LoginRequestDto loginRequestDto) {
+    public boolean login(LoginRequestDto loginRequestDto, HttpSession session) {
         User user = userRepository.findByEmail(loginRequestDto.getEmail())
                 .orElseThrow( () -> new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다.") );
 
@@ -25,11 +26,14 @@ public class AuthServiceImpl implements AuthService {
             throw new IllegalArgumentException("이메일 또는 비밀번호가 일치하지 않습니다.");
         }
 
-        return LoginResponseDto.builder()
+        LoginResponseDto userDto = LoginResponseDto.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .email(user.getEmail())
                 .profileImg(user.getProfileImg())
                 .build();
+        session.setAttribute("loginUser", userDto);
+
+        return true;
     }
 }

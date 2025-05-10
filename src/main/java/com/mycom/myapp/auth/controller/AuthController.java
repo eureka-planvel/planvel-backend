@@ -19,19 +19,18 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequestDto loginRequestDto, HttpSession session) {
+    public ResponseEntity<Boolean> login(@RequestBody LoginRequestDto loginRequestDto, HttpSession session) {
         try {
-            LoginResponseDto user = authService.login(loginRequestDto);
-            session.setAttribute("lgginUser", user);
-            return ResponseEntity.ok(user);
+            boolean loginSuccess = authService.login(loginRequestDto, session);
+            return ResponseEntity.ok(loginSuccess);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(401).body(e.getMessage());
+            return ResponseEntity.status(401).body(false);
         }
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<?> logout(HttpSession session) {
+    public ResponseEntity<Boolean> logout(HttpSession session) {
         session.invalidate();
-        return ResponseEntity.ok("로그아웃 되었습니다.");
+        return ResponseEntity.ok(true);
     }
 }
