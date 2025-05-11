@@ -19,7 +19,8 @@ public class SecurityConfig {
 								"/api/user/register",
 								"/api/user/email-check",
 								"/api/auth/login",
-								"api/auth/logout"
+								"api/auth/logout",
+								"/api/user/profile"
 						).permitAll()
 				)
 				.csrf(csrf -> csrf.disable())

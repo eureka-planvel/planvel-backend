@@ -1,6 +1,10 @@
 package com.mycom.myapp.user.controller;
 
+import com.mycom.myapp.auth.dto.response.LoginResponseDto;
+import com.mycom.myapp.user.dto.UserProfileResponseDto;
 import com.mycom.myapp.user.dto.UserRegisterRequestDto;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,4 +37,19 @@ public class UserController {
 	    boolean isDuplicate = userService.isEmailDuplicate(email);
 	    return ResponseEntity.ok(!isDuplicate);
 	}
+
+	@GetMapping("/profile")
+	public ResponseEntity<UserProfileResponseDto> getUserProfile(HttpSession session) {
+		LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute("loginUser");
+		if (loginUser == null) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+		try {
+			UserProfileResponseDto profile = userService.getUserProfileById(loginUser.getId());
+			return ResponseEntity.ok(profile);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+	}
 }
+
