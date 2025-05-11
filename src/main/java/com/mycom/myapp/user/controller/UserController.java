@@ -1,13 +1,13 @@
 package com.mycom.myapp.user.controller;
 
+import com.mycom.myapp.auth.dto.response.LoginResponseDto;
+import com.mycom.myapp.user.dto.ChangePasswordRequestDto;
 import com.mycom.myapp.user.dto.UserRegisterRequestDto;
+import jakarta.servlet.http.HttpSession;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 import com.mycom.myapp.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
@@ -32,5 +32,26 @@ public class UserController {
 	public ResponseEntity<Boolean> checkEmailDuplicate(@RequestParam("email") String email) {
 	    boolean isDuplicate = userService.isEmailDuplicate(email);
 	    return ResponseEntity.ok(!isDuplicate);
+	}
+
+	@PutMapping("{userId}/password")
+	public ResponseEntity<Boolean> changePassword(
+			@PathVariable int userId,
+			@RequestBody ChangePasswordRequestDto requestDto,
+			Authentication authentication) {
+
+		if(authentication == null || !authentication.isAuthenticated() ||
+		authentication.getPrincipal() instanceof String) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
+		}
+
+		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
+
+		if(loginUser.getId() != userId) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(false);
+		}
+
+		userService.changePassword(userId, requestDto);
+		return ResponseEntity.ok(true);
 	}
 }
