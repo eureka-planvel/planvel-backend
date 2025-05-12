@@ -55,43 +55,31 @@ public class UserController {
 	}
 
 	@GetMapping("/profile")
-	public ResponseEntity<UserProfileResponseDto> getUserProfile(Authentication authentication) {
-		if(authentication == null || !authentication.isAuthenticated() ||
-				authentication.getPrincipal() instanceof String) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
-
-		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
-
+	public ResponseEntity<UserProfileResponseDto> getUserProfile() {
 		try {
-			UserProfileResponseDto profile = userService.getUserProfileById(loginUser.getId());
+			UserProfileResponseDto profile = userService.getUserProfile();
 			return ResponseEntity.ok(profile);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		} catch (IllegalStateException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
 
 	@PutMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<UserProfileResponseDto> updateUserProfile(
-			Authentication authentication,
 			@RequestPart(value = "name", required = false) String name,
 			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 
-		if(authentication == null || !authentication.isAuthenticated() ||
-				authentication.getPrincipal() instanceof String) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
-
-		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
-
 		try {
-			UserProfileResponseDto updatedProfile = userService.updateUserProfile(
-					loginUser.getId(), name, profileImage
-			);
+			UserProfileResponseDto updatedProfile = userService.updateUserProfile(name, profileImage);
 			return ResponseEntity.ok(updatedProfile);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		} catch (IllegalStateException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
+
 }
 
