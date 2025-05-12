@@ -1,5 +1,6 @@
 package com.mycom.myapp.user.service;
 
+import com.mycom.myapp.user.dto.UserProfileResponseDto;
 import com.mycom.myapp.user.dto.ChangePasswordRequestDto;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,6 +55,19 @@ public class UserServiceImpl implements UserService{
 
 		user.setPassword(passwordEncoder.encode(requestDto.getNewPassword()));
 		userRepository.save(user);
+	}
+
+	@Override
+	public UserProfileResponseDto getUserProfileById(int userId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+		return UserProfileResponseDto.builder()
+				.id(user.getId())
+				.name(user.getName())
+				.email(user.getEmail())
+				.profileImg(user.getProfileImg())
+				.build();
 	}
 }
 

@@ -2,6 +2,8 @@ package com.mycom.myapp.user.controller;
 
 import com.mycom.myapp.auth.dto.response.LoginResponseDto;
 import com.mycom.myapp.user.dto.ChangePasswordRequestDto;
+import com.mycom.myapp.auth.dto.response.LoginResponseDto;
+import com.mycom.myapp.user.dto.UserProfileResponseDto;
 import com.mycom.myapp.user.dto.UserRegisterRequestDto;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
@@ -49,4 +51,22 @@ public class UserController {
 		userService.changePassword(loginUser.getId(), requestDto);
 		return ResponseEntity.ok(true);
 	}
+
+	@GetMapping("/profile")
+	public ResponseEntity<UserProfileResponseDto> getUserProfile(Authentication authentication) {
+		if(authentication == null || !authentication.isAuthenticated() ||
+				authentication.getPrincipal() instanceof String) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+
+		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
+
+		try {
+			UserProfileResponseDto profile = userService.getUserProfileById(loginUser.getId());
+			return ResponseEntity.ok(profile);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		}
+	}
 }
+
