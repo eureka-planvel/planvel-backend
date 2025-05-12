@@ -23,7 +23,6 @@ public class SecurityConfig {
 								"/api/user/register",
 								"/api/user/email-check",
 								"/api/auth/login",
-								"/api/user/profile",
 								"/api/auth/logout"
 						).permitAll()
 						.requestMatchers("/api/user/*/password").permitAll()

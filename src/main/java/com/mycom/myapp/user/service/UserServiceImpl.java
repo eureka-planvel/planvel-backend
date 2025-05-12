@@ -10,6 +10,11 @@ import com.mycom.myapp.user.entity.User;
 import com.mycom.myapp.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +37,7 @@ public class UserServiceImpl implements UserService{
 	    String encodedPassword = passwordEncoder.encode(userRegisterRequestDto.getPassword());
 	    user.setPassword(encodedPassword);
 	    if (userRegisterRequestDto.getProfileImg() == null) {
-	        user.setProfileImg("noProfile.png");
+			user.setProfileImg("/uploads/profile/profile_noProfile.png");
 	    }
 	    userRepository.save(user);
 
@@ -69,6 +74,41 @@ public class UserServiceImpl implements UserService{
 				.profileImg(user.getProfileImg())
 				.build();
 	}
+
+	@Override
+	public UserProfileResponseDto updateUserProfile(int userId, String name, MultipartFile imageFile) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+
+		if (StringUtils.hasText(name)) {
+			user.setName(name);
+		}
+
+		if (imageFile != null && !imageFile.isEmpty()) {
+			String uploadDir = "C:/uploads/profile/";
+			String fileName = "profile_" + userId + "_" + System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+			File dest = new File(uploadDir + fileName);
+			dest.getParentFile().mkdirs();
+			try {
+				imageFile.transferTo(dest);
+			} catch (IOException e) {
+				throw new RuntimeException("프로필 이미지 업로드 실패");
+			}
+
+			String imagePath = "/uploads/profile/" + fileName;
+			user.setProfileImg(imagePath);
+		}
+
+		userRepository.save(user);
+
+		return UserProfileResponseDto.builder()
+				.id(user.getId())
+				.name(user.getName())
+				.email(user.getEmail())
+				.profileImg(user.getProfileImg())
+				.build();
+	}
+
 }
 
 
