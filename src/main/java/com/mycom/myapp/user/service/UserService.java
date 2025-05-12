@@ -12,7 +12,7 @@ public interface UserService {
 
 	UserProfileResponseDto getUserProfile();
 
-	void changePassword(int userId, ChangePasswordRequestDto requestDto);
+	void changePassword(ChangePasswordRequestDto requestDto);
 
 	UserProfileResponseDto updateUserProfile(String name, MultipartFile profileImage);
 }
