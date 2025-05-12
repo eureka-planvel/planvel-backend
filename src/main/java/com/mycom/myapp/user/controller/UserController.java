@@ -53,11 +53,14 @@ public class UserController {
 	}
 
 	@GetMapping("/profile")
-	public ResponseEntity<UserProfileResponseDto> getUserProfile(HttpSession session) {
-		LoginResponseDto loginUser = (LoginResponseDto) session.getAttribute("loginUser");
-		if (loginUser == null) {
+	public ResponseEntity<UserProfileResponseDto> getUserProfile(Authentication authentication) {
+		if(authentication == null || !authentication.isAuthenticated() ||
+				authentication.getPrincipal() instanceof String) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
+
+		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
+
 		try {
 			UserProfileResponseDto profile = userService.getUserProfileById(loginUser.getId());
 			return ResponseEntity.ok(profile);
