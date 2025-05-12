@@ -34,9 +34,8 @@ public class UserController {
 	    return ResponseEntity.ok(!isDuplicate);
 	}
 
-	@PutMapping("{userId}/password")
+	@PutMapping("/password")
 	public ResponseEntity<Boolean> changePassword(
-			@PathVariable int userId,
 			@RequestBody ChangePasswordRequestDto requestDto,
 			Authentication authentication) {
 
@@ -47,11 +46,7 @@ public class UserController {
 
 		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
 
-		if(loginUser.getId() != userId) {
-			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(false);
-		}
-
-		userService.changePassword(userId, requestDto);
+		userService.changePassword(loginUser.getId(), requestDto);
 		return ResponseEntity.ok(true);
 	}
 }
