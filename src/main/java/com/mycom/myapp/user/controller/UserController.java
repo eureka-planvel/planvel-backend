@@ -7,12 +7,14 @@ import com.mycom.myapp.user.dto.UserProfileResponseDto;
 import com.mycom.myapp.user.dto.UserRegisterRequestDto;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import com.mycom.myapp.user.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/user")
@@ -53,20 +55,31 @@ public class UserController {
 	}
 
 	@GetMapping("/profile")
-	public ResponseEntity<UserProfileResponseDto> getUserProfile(Authentication authentication) {
-		if(authentication == null || !authentication.isAuthenticated() ||
-				authentication.getPrincipal() instanceof String) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
-
-		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
-
+	public ResponseEntity<UserProfileResponseDto> getUserProfile() {
 		try {
-			UserProfileResponseDto profile = userService.getUserProfileById(loginUser.getId());
+			UserProfileResponseDto profile = userService.getUserProfile();
 			return ResponseEntity.ok(profile);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		} catch (IllegalStateException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
+
+	@PutMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<UserProfileResponseDto> updateUserProfile(
+			@RequestPart(value = "name", required = false) String name,
+			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+
+		try {
+			UserProfileResponseDto updatedProfile = userService.updateUserProfile(name, profileImage);
+			return ResponseEntity.ok(updatedProfile);
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+		} catch (IllegalStateException e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+	}
+
 }
 
