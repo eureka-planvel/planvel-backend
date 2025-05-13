@@ -33,6 +33,9 @@ public class Review {
     @Column(name="updated_at")
     private LocalDateTime updatedAt;
 
+    @Column(name = "likes")
+    private int likesCount;
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
