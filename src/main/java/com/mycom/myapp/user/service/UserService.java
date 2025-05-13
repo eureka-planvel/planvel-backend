@@ -11,9 +11,9 @@ public interface UserService {
 
 	boolean isEmailDuplicate(String email);
 
-	UserProfileResponseDto getUserProfile();
+	UserProfileResponseDto getUserProfile(LoginResponseDto loginUser);
 
 	void changePassword(ChangePasswordRequestDto requestDto, LoginResponseDto loginUser);
 
-	UserProfileResponseDto updateUserProfile(String name, MultipartFile profileImage);
+	UserProfileResponseDto updateUserProfile(LoginResponseDto loginUser, String name, MultipartFile profileImage);
 }

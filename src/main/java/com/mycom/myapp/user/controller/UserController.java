@@ -55,29 +55,41 @@ public class UserController {
 	}
 
 	@GetMapping("/profile")
-	public ResponseEntity<UserProfileResponseDto> getUserProfile() {
+	public ResponseEntity<UserProfileResponseDto> getUserProfile(Authentication authentication) {
+		if(authentication == null || !authentication.isAuthenticated() ||
+				authentication.getPrincipal() instanceof String) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+
+		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
+
 		try {
-			UserProfileResponseDto profile = userService.getUserProfile();
+			UserProfileResponseDto profile = userService.getUserProfile(loginUser);
 			return ResponseEntity.ok(profile);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		} catch (IllegalStateException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
+
 	}
 
 	@PutMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<UserProfileResponseDto> updateUserProfile(
+			Authentication authentication,
 			@RequestPart(value = "name", required = false) String name,
 			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 
+		if(authentication == null || !authentication.isAuthenticated() ||
+				authentication.getPrincipal() instanceof String) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+		}
+
+		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
+
 		try {
-			UserProfileResponseDto updatedProfile = userService.updateUserProfile(name, profileImage);
+			UserProfileResponseDto updatedProfile = userService.updateUserProfile(loginUser, name, profileImage);
 			return ResponseEntity.ok(updatedProfile);
 		} catch (IllegalArgumentException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		} catch (IllegalStateException e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
 
