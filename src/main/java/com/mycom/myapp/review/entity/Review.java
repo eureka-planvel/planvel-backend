@@ -29,7 +29,4 @@ public class Review {
 
     private LocalDateTime createdAt;
 
-    @Column(name = "likes")
-    private int likesCount;
-
 }
