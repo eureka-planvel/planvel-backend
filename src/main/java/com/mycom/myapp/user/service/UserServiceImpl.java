@@ -53,8 +53,8 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public void changePassword(int userId, ChangePasswordRequestDto requestDto) {
-		User user = userRepository.findById(userId)
+	public void changePassword(ChangePasswordRequestDto requestDto, LoginResponseDto loginUser) {
+		User user = userRepository.findById(loginUser.getId())
 				.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
 		if(!passwordEncoder.matches(requestDto.getCurrentPassword(), user.getPassword())) {

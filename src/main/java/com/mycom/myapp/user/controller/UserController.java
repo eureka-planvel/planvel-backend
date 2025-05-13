@@ -50,7 +50,7 @@ public class UserController {
 
 		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
 
-		userService.changePassword(loginUser.getId(), requestDto);
+		userService.changePassword(requestDto, loginUser);
 		return ResponseEntity.ok(true);
 	}
 
