@@ -53,14 +53,7 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public void changePassword(ChangePasswordRequestDto requestDto) {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if(authentication == null || !authentication.isAuthenticated()) {
-			throw new IllegalArgumentException("인증된 사용자가 없습니다.");
-		}
-
-		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
-
+	public void changePassword(ChangePasswordRequestDto requestDto, LoginResponseDto loginUser) {
 		User user = userRepository.findById(loginUser.getId())
 				.orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
