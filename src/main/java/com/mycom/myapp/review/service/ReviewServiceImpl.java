@@ -35,7 +35,6 @@ public class ReviewServiceImpl implements ReviewService {
                 .region(requestDto.getRegion())
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
-                .createdAt(LocalDateTime.now())
                 .build();
 
         Review saved = reviewRepository.save(review);
@@ -60,15 +59,32 @@ public class ReviewServiceImpl implements ReviewService {
             throw new SecurityException("본인만 리뷰를 수정할 수 있습니다.");
         }
 
-        if (!StringUtils.hasText(dto.getTitle()) && !StringUtils.hasText(dto.getContent())) {
-            throw new IllegalArgumentException("수정할 제목 또는 내용을 입력하세요.");
+        boolean isTitleModified = dto.getTitle() != null;
+        boolean isContentModified = dto.getContent() != null;
+
+        if (!isTitleModified && !isContentModified) {
+            return ReviewUpdateResponseDto.builder()
+                    .id(review.getId())
+                    .userName(review.getUser().getName())
+                    .region(review.getRegion())
+                    .title(review.getTitle())
+                    .content(review.getContent())
+                    .createdAt(review.getCreatedAt())
+                    .updatedAt(review.getUpdatedAt())
+                    .build();
         }
 
-        if (StringUtils.hasText(dto.getTitle())) {
+        if (isTitleModified) {
+            if (dto.getTitle().trim().isEmpty()) {
+                throw new IllegalArgumentException("제목을 빈 칸으로 수정할 수 없습니다.");
+            }
             review.setTitle(dto.getTitle().trim());
         }
 
-        if (StringUtils.hasText(dto.getContent())) {
+        if (isContentModified) {
+            if (dto.getContent().trim().isEmpty()) {
+                throw new IllegalArgumentException("내용을 빈 칸으로 수정할 수 없습니다.");
+            }
             review.setContent(dto.getContent().trim());
         }
 

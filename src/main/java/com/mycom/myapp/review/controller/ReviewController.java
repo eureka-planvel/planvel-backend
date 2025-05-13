@@ -35,9 +35,9 @@ public class ReviewController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
     }
 
-    @PutMapping("/{reviewId}")
+    @PutMapping("/{review_id}")
     public ResponseEntity<ReviewUpdateResponseDto> updateReview(
-            @PathVariable("reviewId") int reviewId,
+            @PathVariable("review_id") int reviewId,
             @RequestBody ReviewUpdateRequestDto dto,
             Authentication authentication) {
 
