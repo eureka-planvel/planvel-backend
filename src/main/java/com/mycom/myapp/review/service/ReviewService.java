@@ -1,7 +1,9 @@
 package com.mycom.myapp.review.service;
 
+import com.mycom.myapp.auth.dto.response.LoginResponseDto;
 import com.mycom.myapp.review.dto.ReviewRequestDto;
+import com.mycom.myapp.review.dto.ReviewResponseDto;
 
 public interface ReviewService {
-    void writeReview(ReviewRequestDto requestDto, int userId);
+    ReviewResponseDto writeReview(ReviewRequestDto requestDto, LoginResponseDto loginUser);
 }
