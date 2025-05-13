@@ -1,10 +1,7 @@
 package com.mycom.myapp.review.controller;
 
 import com.mycom.myapp.auth.dto.response.LoginResponseDto;
-import com.mycom.myapp.review.dto.ReviewRequestDto;
-import com.mycom.myapp.review.dto.ReviewResponseDto;
-import com.mycom.myapp.review.dto.ReviewUpdateRequestDto;
-import com.mycom.myapp.review.dto.ReviewUpdateResponseDto;
+import com.mycom.myapp.review.dto.*;
 import com.mycom.myapp.review.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -56,5 +53,20 @@ public class ReviewController {
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+    }
+
+    @PostMapping("/like/{reviewId}")
+    public ResponseEntity<LikeResponseDto> likeReview(@PathVariable int reviewId,
+                                                      Authentication authentication) {
+
+        if (authentication == null || !authentication.isAuthenticated() ||
+                authentication.getPrincipal() instanceof String) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
+
+        LikeResponseDto response = reviewService.likeReview(reviewId, loginUser);
+        return ResponseEntity.ok(response);
     }
 }
