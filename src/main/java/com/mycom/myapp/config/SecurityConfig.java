@@ -2,6 +2,7 @@ package com.mycom.myapp.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,10 +24,10 @@ public class SecurityConfig {
 								"/api/user/register",
 								"/api/user/email-check",
 								"/api/auth/login",
-								"/api/auth/logout",
-								"/api/review"
+								"/api/auth/logout"
 						).permitAll()
-						.requestMatchers("/api/user/*/password").permitAll()
+						.requestMatchers(HttpMethod.GET, "/api/review").permitAll()
+						.requestMatchers(HttpMethod.POST, "/api/review").authenticated()
 						.anyRequest().authenticated()
 				)
 				.sessionManagement(session -> session
