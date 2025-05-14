@@ -9,14 +9,14 @@ import com.mycom.myapp.review.repository.ReviewRepository;
 import com.mycom.myapp.user.entity.User;
 import com.mycom.myapp.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -141,6 +141,24 @@ public class ReviewServiceImpl implements ReviewService {
                 .liked(liked)
                 .likesCount(review.getLikesCount())
                 .build();
+    }
+
+    @Override
+    public List<ReviewResponseDto> getAllReviewsSortedByLikes() {
+        List<Review> reviews = reviewRepository.findAllWithUserSortedByLikes();
+
+        return reviews.stream()
+                .map(review -> ReviewResponseDto.builder()
+                        .id(review.getId())
+                        .userName(review.getUser().getName())
+                        .region(review.getRegion())
+                        .title(review.getTitle())
+                        .content(review.getContent())
+                        .createdAt(review.getCreatedAt())
+                        .updatedAt(review.getUpdatedAt())
+                        .likesCount(review.getLikesCount())
+                        .build())
+                .collect(Collectors.toList());
     }
 
 }
