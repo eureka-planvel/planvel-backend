@@ -23,8 +23,7 @@ public class SecurityConfig {
 								"/api/user/register",
 								"/api/user/email-check",
 								"/api/auth/login",
-								"/api/auth/logout",
-								"/api/review"
+								"/api/auth/logout"
 						).permitAll()
 						.anyRequest().authenticated()
 				)
