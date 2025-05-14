@@ -181,4 +181,22 @@ public class ReviewServiceImpl implements ReviewService {
         reviewRepository.delete(review);
     }
 
+    @Override
+    public List<ReviewResponseDto> getMyReviews(LoginResponseDto loginUser) {
+        int userId = loginUser.getId();
+        List<Review> reviews = reviewRepository.findAllByUserIdWithRegion(userId);
+
+        return reviews.stream()
+                .map(review -> ReviewResponseDto.builder()
+                        .id(review.getId())
+                        .userName(review.getUser().getName())
+                        .title(review.getTitle())
+                        .content(review.getContent())
+                        .createdAt(review.getCreatedAt())
+                        .updatedAt(review.getUpdatedAt())
+                        .likesCount(review.getLikesCount())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 }
