@@ -29,13 +29,15 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewResponseDto writeReview(ReviewRequestDto requestDto, LoginResponseDto loginUser) {
         User user = userRepository.findById(loginUser.getId())
-                .orElseThrow( () -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
         Review review = Review.builder()
                 .user(user)
                 .region(requestDto.getRegion())
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
 
         Review saved = reviewRepository.save(review);
@@ -47,13 +49,14 @@ public class ReviewServiceImpl implements ReviewService {
                 .title(saved.getTitle())
                 .content(saved.getContent())
                 .createdAt(saved.getCreatedAt())
+                .updatedAt(saved.getUpdatedAt())
                 .likesCount(saved.getLikesCount())
                 .build();
     }
 
     @Override
     @Transactional
-    public ReviewUpdateResponseDto updateReview(int reviewId, LoginResponseDto loginUser, ReviewUpdateRequestDto dto){
+    public ReviewResponseDto updateReview(int reviewId, LoginResponseDto loginUser, ReviewUpdateRequestDto dto) {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new IllegalArgumentException("리뷰를 찾을 수 없습니다."));
 
@@ -65,7 +68,7 @@ public class ReviewServiceImpl implements ReviewService {
         boolean isContentModified = dto.getContent() != null;
 
         if (!isTitleModified && !isContentModified) {
-            return ReviewUpdateResponseDto.builder()
+            return ReviewResponseDto.builder()
                     .id(review.getId())
                     .userName(review.getUser().getName())
                     .region(review.getRegion())
@@ -73,6 +76,7 @@ public class ReviewServiceImpl implements ReviewService {
                     .content(review.getContent())
                     .createdAt(review.getCreatedAt())
                     .updatedAt(review.getUpdatedAt())
+                    .likesCount(review.getLikesCount())
                     .build();
         }
 
@@ -90,9 +94,9 @@ public class ReviewServiceImpl implements ReviewService {
             review.setContent(dto.getContent().trim());
         }
 
-        reviewRepository.flush();
+        review.setUpdatedAt(LocalDateTime.now());
 
-        return ReviewUpdateResponseDto.builder()
+        return ReviewResponseDto.builder()
                 .id(review.getId())
                 .userName(review.getUser().getName())
                 .region(review.getRegion())
@@ -100,6 +104,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .content(review.getContent())
                 .createdAt(review.getCreatedAt())
                 .updatedAt(review.getUpdatedAt())
+                .likesCount(review.getLikesCount())
                 .build();
     }
 

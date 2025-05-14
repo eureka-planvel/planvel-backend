@@ -33,20 +33,20 @@ public class ReviewController {
     }
 
     @PutMapping("/{review_id}")
-    public ResponseEntity<ReviewUpdateResponseDto> updateReview(
+    public ResponseEntity<ReviewResponseDto> updateReview(
             @PathVariable("review_id") int reviewId,
             @RequestBody ReviewUpdateRequestDto dto,
             Authentication authentication) {
 
         if(authentication == null || !authentication.isAuthenticated() ||
                 authentication.getPrincipal() instanceof String) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
         LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
 
         try {
-            ReviewUpdateResponseDto updatedReview = reviewService.updateReview(reviewId, loginUser, dto);
+            ReviewResponseDto updatedReview = reviewService.updateReview(reviewId, loginUser, dto);
             return ResponseEntity.ok(updatedReview);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -69,4 +69,5 @@ public class ReviewController {
         LikeResponseDto response = reviewService.likeReview(reviewId, loginUser);
         return ResponseEntity.ok(response);
     }
+
 }
