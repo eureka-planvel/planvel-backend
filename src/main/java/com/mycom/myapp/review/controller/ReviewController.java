@@ -9,6 +9,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/review")
 @RequiredArgsConstructor
@@ -68,6 +70,12 @@ public class ReviewController {
 
         LikeResponseDto response = reviewService.likeReview(reviewId, loginUser);
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<ReviewResponseDto>> getAllReviews() {
+        List<ReviewResponseDto> reviews = reviewService.getAllReviewsSortedByLikes();
+        return ResponseEntity.ok(reviews);
     }
 
     @DeleteMapping("/{review_id}")
