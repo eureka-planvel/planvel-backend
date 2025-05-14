@@ -12,5 +12,9 @@ public interface ReviewService {
     List<ReviewResponseDto> getAllReviewsSortedByLikes();
 
     void deleteReview(int reviewId, LoginResponseDto loginUser);
+
     List<ReviewResponseDto> getReviewsByRegionSortedByLikes(int regionId);
+
+    List<ReviewResponseDto> getMyReviews(LoginResponseDto loginUser);
+
 }
