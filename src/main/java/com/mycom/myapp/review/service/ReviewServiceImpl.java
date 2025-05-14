@@ -9,7 +9,6 @@ import com.mycom.myapp.review.repository.ReviewRepository;
 import com.mycom.myapp.user.entity.User;
 import com.mycom.myapp.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -159,6 +158,20 @@ public class ReviewServiceImpl implements ReviewService {
                         .likesCount(review.getLikesCount())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public void deleteReview(int reviewId, LoginResponseDto loginUser) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 리뷰를 찾을 수 없습니다."));
+
+        if (review.getUser().getId() != loginUser.getId()) {
+            throw new SecurityException("본인만 리뷰를 삭제할 수 있습니다.");
+        }
+
+        likeRepository.deleteByReviewId(reviewId);
+        reviewRepository.delete(review);
     }
 
 }

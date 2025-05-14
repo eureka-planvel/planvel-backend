@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface LikeRepository extends JpaRepository<Like, Integer> {
     Optional<Like> findByReviewIdAndUserId(int reviewId, int userId);
+    void deleteByReviewId(int reviewId);
 }

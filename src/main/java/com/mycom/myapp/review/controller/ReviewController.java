@@ -78,4 +78,25 @@ public class ReviewController {
         return ResponseEntity.ok(reviews);
     }
 
+    @DeleteMapping("/{review_id}")
+    public ResponseEntity<Void> deleteReview(@PathVariable("review_id") int reviewId,
+                                             Authentication authentication) {
+
+        if (authentication == null || !authentication.isAuthenticated() ||
+                authentication.getPrincipal() instanceof String) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
+
+        try {
+            reviewService.deleteReview(reviewId, loginUser);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (SecurityException e) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+    }
+
 }
