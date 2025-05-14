@@ -7,5 +7,5 @@ public interface ReviewService {
     ReviewResponseDto writeReview(ReviewRequestDto requestDto, LoginResponseDto loginUser);
     ReviewResponseDto updateReview(int reviewId, LoginResponseDto loginUser, ReviewUpdateRequestDto dto);
     LikeResponseDto likeReview(int reviewId, LoginResponseDto loginUser);
-
+    void deleteReview(int reviewId, LoginResponseDto loginUser);
 }
