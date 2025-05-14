@@ -99,4 +99,10 @@ public class ReviewController {
         }
     }
 
+    @GetMapping("/{region_id}")
+    public ResponseEntity<List<ReviewResponseDto>> getReviewsByRegion(@PathVariable("region_id") int regionId) {
+        List<ReviewResponseDto> reviews = reviewService.getReviewsByRegionSortedByLikes(regionId);
+        return ResponseEntity.ok(reviews);
+    }
+
 }
