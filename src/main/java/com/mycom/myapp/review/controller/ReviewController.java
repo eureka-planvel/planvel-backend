@@ -7,8 +7,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.attribute.UserPrincipal;
 import java.util.List;
 
 @RestController
@@ -97,6 +99,12 @@ public class ReviewController {
         } catch (SecurityException e) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+    }
+
+    @GetMapping("/my")
+    public ResponseEntity<List<ReviewResponseDto>> getMyReviews(@AuthenticationPrincipal LoginResponseDto loginUser) {
+        List<ReviewResponseDto> myReviews = reviewService.getMyReviews(loginUser);
+        return ResponseEntity.ok(myReviews);
     }
 
 }

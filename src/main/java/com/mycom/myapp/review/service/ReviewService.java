@@ -12,4 +12,5 @@ public interface ReviewService {
     List<ReviewResponseDto> getAllReviewsSortedByLikes();
 
     void deleteReview(int reviewId, LoginResponseDto loginUser);
+    List<ReviewResponseDto> getMyReviews(LoginResponseDto loginUser);
 }
