@@ -4,7 +4,7 @@ import lombok.Data;
 
 @Data
 public class ReviewRequestDto {
-    private String region;
+    private int regionId;
     private String title;
     private String content;
 }

@@ -23,7 +23,10 @@ public class Review {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private String region;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id", nullable = false)
+    private Region region;
+
     private String title;
     private String content;
 
