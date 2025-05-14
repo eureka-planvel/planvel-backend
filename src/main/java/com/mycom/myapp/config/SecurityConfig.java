@@ -25,7 +25,6 @@ public class SecurityConfig {
 								"/api/auth/login",
 								"/api/auth/logout"
 						).permitAll()
-						.requestMatchers("/api/user/*/password").permitAll()
 						.anyRequest().authenticated()
 				)
 				.sessionManagement(session -> session
