@@ -4,9 +4,9 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "region")
-@Getter
+@Table(name="region")
 @Setter
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

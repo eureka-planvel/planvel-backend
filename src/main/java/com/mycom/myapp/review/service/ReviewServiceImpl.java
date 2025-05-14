@@ -3,8 +3,10 @@ package com.mycom.myapp.review.service;
 import com.mycom.myapp.auth.dto.response.LoginResponseDto;
 import com.mycom.myapp.review.dto.*;
 import com.mycom.myapp.review.entity.Like;
+import com.mycom.myapp.review.entity.Region;
 import com.mycom.myapp.review.entity.Review;
 import com.mycom.myapp.review.repository.LikeRepository;
+import com.mycom.myapp.review.repository.RegionRepository;
 import com.mycom.myapp.review.repository.ReviewRepository;
 import com.mycom.myapp.user.entity.User;
 import com.mycom.myapp.user.repository.UserRepository;
@@ -24,19 +26,24 @@ public class ReviewServiceImpl implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final UserRepository userRepository;
     private final LikeRepository likeRepository;
+    private final RegionRepository regionRepository;
 
     @Override
     public ReviewResponseDto writeReview(ReviewRequestDto requestDto, LoginResponseDto loginUser) {
         User user = userRepository.findById(loginUser.getId())
                 .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
 
+        Region region = regionRepository.findById(requestDto.getRegionId())
+                .orElseThrow( () -> new IllegalArgumentException("해당 지역을 찾을 수 없습니다."));
+
         Review review = Review.builder()
                 .user(user)
-                .region(requestDto.getRegion())
+                .region(region)
                 .title(requestDto.getTitle())
                 .content(requestDto.getContent())
                 .createdAt(LocalDateTime.now())
                 .updatedAt(LocalDateTime.now())
+                .likesCount(0)
                 .build();
 
         Review saved = reviewRepository.save(review);
@@ -44,7 +51,7 @@ public class ReviewServiceImpl implements ReviewService {
         return ReviewResponseDto.builder()
                 .id(saved.getId())
                 .userName(user.getName())
-                .region(saved.getRegion())
+                .region(saved.getRegion().getName())
                 .title(saved.getTitle())
                 .content(saved.getContent())
                 .createdAt(saved.getCreatedAt())
@@ -150,7 +157,7 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(review -> ReviewResponseDto.builder()
                         .id(review.getId())
                         .userName(review.getUser().getName())
-                        .region(review.getRegion())
+                        .region(review.getRegion().getName())
                         .title(review.getTitle())
                         .content(review.getContent())
                         .createdAt(review.getCreatedAt())
