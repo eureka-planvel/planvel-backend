@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
 
-    @Query("SELECT r FROM Review r JOIN FETCH r.user ORDER BY r.likesCount DESC")
+    @Query("SELECT r FROM Review r JOIN FETCH r.user JOIN FETCH r.region ORDER BY r.likesCount DESC")
     List<Review> findAllWithUserSortedByLikes();
 }
