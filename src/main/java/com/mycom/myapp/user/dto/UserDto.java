@@ -1,10 +1,9 @@
 package com.mycom.myapp.user.dto;
 
+import com.mycom.myapp.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
-import com.mycom.myapp.user.entity.User;
 
 @Getter
 @AllArgsConstructor

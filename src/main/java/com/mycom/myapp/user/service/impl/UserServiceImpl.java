@@ -1,27 +1,23 @@
 package com.mycom.myapp.user.service.impl;
 
-import com.mycom.myapp.auth.dto.response.LoginResponseDto;
 import com.mycom.myapp.common.response.CommonResponse;
 import com.mycom.myapp.common.response.ResponseWithStatus;
 import com.mycom.myapp.user.dto.UserDto;
-import com.mycom.myapp.user.dto.response.UserProfileResponseDto;
 import com.mycom.myapp.user.dto.request.ChangePasswordRequestDto;
+import com.mycom.myapp.user.dto.request.UserRegisterRequestDto;
+import com.mycom.myapp.user.dto.response.UserProfileResponseDto;
+import com.mycom.myapp.user.entity.User;
+import com.mycom.myapp.user.repository.UserRepository;
 import com.mycom.myapp.user.service.UserService;
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.mycom.myapp.user.dto.request.UserRegisterRequestDto;
-import com.mycom.myapp.user.entity.User;
-import com.mycom.myapp.user.repository.UserRepository;
-
-import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor

@@ -1,11 +1,10 @@
 package com.mycom.myapp.user.service;
 
-import com.mycom.myapp.auth.dto.response.LoginResponseDto;
 import com.mycom.myapp.common.response.ResponseWithStatus;
-import com.mycom.myapp.user.dto.request.ChangePasswordRequestDto;
 import com.mycom.myapp.user.dto.UserDto;
-import com.mycom.myapp.user.dto.response.UserProfileResponseDto;
+import com.mycom.myapp.user.dto.request.ChangePasswordRequestDto;
 import com.mycom.myapp.user.dto.request.UserRegisterRequestDto;
+import com.mycom.myapp.user.dto.response.UserProfileResponseDto;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
