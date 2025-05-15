@@ -1,12 +1,13 @@
 package com.mycom.myapp.review.service;
 
 import com.mycom.myapp.auth.dto.response.LoginResponseDto;
+import com.mycom.myapp.region.entity.Region;
+import com.mycom.myapp.region.repository.RegionRepository;
 import com.mycom.myapp.review.dto.*;
 import com.mycom.myapp.review.entity.Like;
-import com.mycom.myapp.review.entity.Region;
+
 import com.mycom.myapp.review.entity.Review;
 import com.mycom.myapp.review.repository.LikeRepository;
-import com.mycom.myapp.review.repository.RegionRepository;
 import com.mycom.myapp.review.repository.ReviewRepository;
 import com.mycom.myapp.user.entity.User;
 import com.mycom.myapp.user.repository.UserRepository;
@@ -18,6 +19,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -190,6 +192,24 @@ public class ReviewServiceImpl implements ReviewService {
                 .map(review -> ReviewResponseDto.builder()
                         .id(review.getId())
                         .userName(review.getUser().getName())
+                        .title(review.getTitle())
+                        .content(review.getContent())
+                        .createdAt(review.getCreatedAt())
+                        .updatedAt(review.getUpdatedAt())
+                        .likesCount(review.getLikesCount())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ReviewResponseDto> getReviewsByRegionSortedByLikes(int regionId) {
+        List<Review> reviews = reviewRepository.findAllByRegionIdSortedByLikes(regionId);
+
+        return reviews.stream()
+                .map(review -> ReviewResponseDto.builder()
+                        .id(review.getId())
+                        .userName(review.getUser().getName())
+                        .region(review.getRegion().getName())
                         .title(review.getTitle())
                         .content(review.getContent())
                         .createdAt(review.getCreatedAt())

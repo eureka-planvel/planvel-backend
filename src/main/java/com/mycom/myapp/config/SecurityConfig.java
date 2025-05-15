@@ -24,7 +24,8 @@ public class SecurityConfig {
 								"/api/user/email-check",
 								"/api/auth/login",
 								"/api/auth/logout",
-								"/api/review"
+								"/api/review",
+								"/api/review/*"
 						).permitAll()
 						.anyRequest().authenticated()
 				)
