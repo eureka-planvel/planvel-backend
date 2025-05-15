@@ -16,7 +16,7 @@ public class AccommodationController {
     private final AccommodationService accommodationService;
 
     @GetMapping("/{region_id}")
-    public ResponseEntity<List<AccommodationResponseDto>> getAccommodationByRegion(@PathVariable("region_id") int regionId) {
+    public ResponseEntity<List<AccommodationResponseDto>> getAccommodationsByRegion(@PathVariable("region_id") int regionId) {
         List<AccommodationResponseDto> accommodations = accommodationService.getAccommodationsByRegion(regionId);
         return ResponseEntity.ok(accommodations);
     }
