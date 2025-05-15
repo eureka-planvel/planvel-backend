@@ -28,7 +28,10 @@ public class SecurityConfig {
 								"/api/review/*",
 								"/api/regions",
 								"/api/stay/**",
-								"/api/spot/**"
+								"/api/spot/**",
+								"/v3/api-docs/**",
+								"/swagger-ui/**",
+								"/swagger-ui.html"
 						).permitAll()
 						.anyRequest().authenticated()
 				)
