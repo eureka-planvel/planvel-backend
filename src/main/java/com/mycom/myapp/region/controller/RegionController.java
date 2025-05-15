@@ -1,5 +1,7 @@
 package com.mycom.myapp.region.controller;
 
+import com.mycom.myapp.common.response.CommonResponse;
+import com.mycom.myapp.common.response.ResponseWithStatus;
 import com.mycom.myapp.region.dto.RegionResponseDto;
 import com.mycom.myapp.region.service.RegionService;
 import lombok.RequiredArgsConstructor;
@@ -18,8 +20,8 @@ public class RegionController {
     private final RegionService regionService;
 
     @GetMapping
-    public ResponseEntity<List<RegionResponseDto>> getRegions() {
-        List<RegionResponseDto> regions = regionService.getAllRegions();
-        return ResponseEntity.ok(regions);
+    public ResponseEntity<CommonResponse<List<RegionResponseDto>>> getRegions() {
+        ResponseWithStatus<List<RegionResponseDto>> response = regionService.getAllRegions();
+        return ResponseEntity.status(response.getStatus()).body(response.getBody());
     }
 }
