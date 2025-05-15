@@ -25,7 +25,8 @@ public class SecurityConfig {
 								"/api/auth/login",
 								"/api/auth/logout",
 								"/api/review",
-								"/api/review/*"
+								"/api/review/*",
+								"/api/regions"
 						).permitAll()
 						.anyRequest().authenticated()
 				)
