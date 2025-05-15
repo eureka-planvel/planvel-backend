@@ -23,6 +23,10 @@ public class ResponseWithStatus<T> {
     return new ResponseWithStatus<>(HttpStatus.BAD_REQUEST, body);
   }
 
+  public static <T> ResponseWithStatus<T> unauthorized(CommonResponse<T> body) {
+    return new ResponseWithStatus<>(HttpStatus.UNAUTHORIZED, body);
+  }
+
   public HttpStatus getStatus() {
     return status;
   }
