@@ -1,7 +1,6 @@
 package com.mycom.myapp.auth.controller;
 
 import com.mycom.myapp.auth.dto.request.LoginRequestDto;
-import com.mycom.myapp.auth.dto.response.LoginResponseDto;
 import com.mycom.myapp.auth.service.AuthService;
 import com.mycom.myapp.common.resolver.LoginUser;
 import com.mycom.myapp.common.response.CommonResponse;
