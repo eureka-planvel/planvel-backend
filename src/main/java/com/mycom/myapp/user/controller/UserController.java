@@ -1,15 +1,15 @@
 package com.mycom.myapp.user.controller;
 
-import com.mycom.myapp.auth.dto.response.LoginResponseDto;
-import com.mycom.myapp.user.dto.ChangePasswordRequestDto;
-import com.mycom.myapp.auth.dto.response.LoginResponseDto;
-import com.mycom.myapp.user.dto.UserProfileResponseDto;
-import com.mycom.myapp.user.dto.UserRegisterRequestDto;
-import jakarta.servlet.http.HttpSession;
-import org.springframework.http.HttpStatus;
+import com.mycom.myapp.common.resolver.LoginUser;
+import com.mycom.myapp.common.response.CommonResponse;
+import com.mycom.myapp.common.response.ResponseWithStatus;
+import com.mycom.myapp.user.dto.request.ChangePasswordRequestDto;
+import com.mycom.myapp.user.dto.UserDto;
+import com.mycom.myapp.user.dto.request.UpdateNameRequest;
+import com.mycom.myapp.user.dto.response.UserProfileResponseDto;
+import com.mycom.myapp.user.dto.request.UserRegisterRequestDto;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import com.mycom.myapp.user.service.UserService;
 
@@ -17,81 +17,77 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
 	private final UserService userService;
 
 	@PostMapping("/register")
-	public ResponseEntity<Boolean> insertUser(@RequestBody UserRegisterRequestDto userRegisterRequestDto) {
-	    try {
-	        boolean result = userService.insertUser(userRegisterRequestDto);
-	        return ResponseEntity.ok(result);
-	    } catch (Exception e) {
-	        return ResponseEntity.status(500).body(false);
-	    }
+	public ResponseEntity<CommonResponse<Void>> registerUser(@RequestBody UserRegisterRequestDto request) {
+
+		ResponseWithStatus<Void> response = userService.registerUser(request);
+		return ResponseEntity.status(response.getStatus()).body(response.getBody());
 	}
 
 	@GetMapping("/email-check")
-	public ResponseEntity<Boolean> checkEmailDuplicate(@RequestParam("email") String email) {
-	    boolean isDuplicate = userService.isEmailDuplicate(email);
-	    return ResponseEntity.ok(!isDuplicate);
+	public ResponseEntity<CommonResponse<Void>> checkEmailDuplicate(@RequestParam("email") String email) {
+		ResponseWithStatus<Void> response = userService.checkEmailDuplicate(email);
+		return ResponseEntity.status(response.getStatus()).body(response.getBody());
 	}
 
 	@PutMapping("/password")
-	public ResponseEntity<Boolean> changePassword(
-			@RequestBody ChangePasswordRequestDto requestDto,
-			Authentication authentication) {
-
-		if(authentication == null || !authentication.isAuthenticated() ||
-		authentication.getPrincipal() instanceof String) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(false);
-		}
-
-		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
-
-		userService.changePassword(requestDto, loginUser);
-		return ResponseEntity.ok(true);
+	public ResponseEntity<CommonResponse<Void>> changePassword( @RequestBody ChangePasswordRequestDto request, @LoginUser UserDto user) {
+		ResponseWithStatus<Void> response = userService.changePassword(request, user);
+		return ResponseEntity.status(response.getStatus()).body(response.getBody());
 	}
 
 	@GetMapping("/profile")
-	public ResponseEntity<UserProfileResponseDto> getUserProfile(Authentication authentication) {
-		if(authentication == null || !authentication.isAuthenticated() ||
-				authentication.getPrincipal() instanceof String) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
-
-		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
-
-		try {
-			UserProfileResponseDto profile = userService.getUserProfile(loginUser);
-			return ResponseEntity.ok(profile);
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
-
+	public ResponseEntity<CommonResponse<UserProfileResponseDto>> getUserProfile(@LoginUser UserDto user) {
+		ResponseWithStatus<UserProfileResponseDto> response = userService.getUserProfile(user.getId());
+		return ResponseEntity.status(response.getStatus()).body(response.getBody());
 	}
 
-	@PutMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<UserProfileResponseDto> updateUserProfile(
-			Authentication authentication,
-			@RequestPart(value = "name", required = false) String name,
-			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
 
-		if(authentication == null || !authentication.isAuthenticated() ||
-				authentication.getPrincipal() instanceof String) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-		}
-
-		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
-
-		try {
-			UserProfileResponseDto updatedProfile = userService.updateUserProfile(loginUser, name, profileImage);
-			return ResponseEntity.ok(updatedProfile);
-		} catch (IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-		}
+	@PutMapping("/profile/name")
+	public ResponseEntity<CommonResponse<Void>> updateName(@LoginUser UserDto user, @RequestBody UpdateNameRequest request) {
+		ResponseWithStatus<Void> response = userService.updateUserName(user.getId(), request.getName());
+		return ResponseEntity.status(response.getStatus()).body(response.getBody());
 	}
+
+	@PutMapping(value = "/profile/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<CommonResponse<UserProfileResponseDto>> updateProfileImage(
+			@LoginUser UserDto user,
+			@RequestPart("profileImage") MultipartFile profileImage) {
+
+		ResponseWithStatus<UserProfileResponseDto> response = userService.updateProfileImage(user.getId(), profileImage);
+		return ResponseEntity.status(response.getStatus()).body(response.getBody());
+	}
+
+
+
+
+
+
+//	@PutMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+//	public ResponseEntity<UserProfileResponseDto> updateUserProfile(
+//			Authentication authentication,
+//			@RequestPart(value = "name", required = false) String name,
+//			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
+//
+//		if(authentication == null || !authentication.isAuthenticated() ||
+//				authentication.getPrincipal() instanceof String) {
+//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+//		}
+//
+//		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
+//
+//		try {
+//			UserProfileResponseDto updatedProfile = userService.updateUserProfile(loginUser, name, profileImage);
+//			return ResponseEntity.ok(updatedProfile);
+//		} catch (IllegalArgumentException e) {
+//			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+//		}
+//	}
 
 }
 

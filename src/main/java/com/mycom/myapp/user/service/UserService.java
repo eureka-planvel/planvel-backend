@@ -1,19 +1,23 @@
 package com.mycom.myapp.user.service;
 
 import com.mycom.myapp.auth.dto.response.LoginResponseDto;
-import com.mycom.myapp.user.dto.ChangePasswordRequestDto;
-import com.mycom.myapp.user.dto.UserProfileResponseDto;
-import com.mycom.myapp.user.dto.UserRegisterRequestDto;
+import com.mycom.myapp.common.response.ResponseWithStatus;
+import com.mycom.myapp.user.dto.request.ChangePasswordRequestDto;
+import com.mycom.myapp.user.dto.UserDto;
+import com.mycom.myapp.user.dto.response.UserProfileResponseDto;
+import com.mycom.myapp.user.dto.request.UserRegisterRequestDto;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
-	boolean insertUser(UserRegisterRequestDto userRegisterRequestDto);
+	ResponseWithStatus<Void> registerUser(UserRegisterRequestDto userRegisterRequestDto);
 
-	boolean isEmailDuplicate(String email);
+	ResponseWithStatus<Void> checkEmailDuplicate(String email);
 
-	UserProfileResponseDto getUserProfile(LoginResponseDto loginUser);
+	ResponseWithStatus<Void> changePassword(ChangePasswordRequestDto request, UserDto user);
 
-	void changePassword(ChangePasswordRequestDto requestDto, LoginResponseDto loginUser);
+	ResponseWithStatus<UserProfileResponseDto> getUserProfile(int id);
 
-	UserProfileResponseDto updateUserProfile(LoginResponseDto loginUser, String name, MultipartFile profileImage);
+	ResponseWithStatus<Void> updateUserName(int id, String name);
+
+	ResponseWithStatus<UserProfileResponseDto> updateProfileImage(int id, MultipartFile profileImage);
 }

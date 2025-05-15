@@ -1,4 +1,4 @@
-package com.mycom.myapp.user.dto;
+package com.mycom.myapp.user.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,5 +14,4 @@ public class UserRegisterRequestDto {
 	private String name;
 	private String email;
 	private String password;
-	private String profileImg;
 }
