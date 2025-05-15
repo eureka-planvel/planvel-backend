@@ -1,5 +1,6 @@
 package com.mycom.myapp.review.entity;
 
+import com.mycom.myapp.region.entity.Region;
 import com.mycom.myapp.user.entity.User;
 import jakarta.persistence.*;
 import lombok.*;

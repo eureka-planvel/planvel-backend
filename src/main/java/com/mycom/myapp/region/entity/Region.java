@@ -1,4 +1,4 @@
-package com.mycom.myapp.review.entity;
+package com.mycom.myapp.region.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
