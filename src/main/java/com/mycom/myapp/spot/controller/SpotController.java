@@ -22,13 +22,19 @@ import java.util.List;
 public class SpotController {
     private final SpotService spotService;
 
-    @GetMapping("/{region_id}")
+    @GetMapping("/region/{region_id}")
     public ResponseEntity<CommonResponse<List<SpotResponseDto>>> getSpotsByRegionAndType(
         @PathVariable("region_id") int regionId,
         @RequestParam("type") SpotType type,
         @RequestParam(value = "page", defaultValue = "1") int page) {
 
         ResponseWithStatus<List<SpotResponseDto>> response = spotService.getSpotsByRegionAndType(regionId, type, page, 9);
+        return ResponseEntity.status(response.getStatus()).body(response.getBody());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CommonResponse<SpotResponseDto>> getSpotDetail(@PathVariable("id") int id ){
+        ResponseWithStatus<SpotResponseDto> response = spotService.getSpotDetail(id);
         return ResponseEntity.status(response.getStatus()).body(response.getBody());
     }
 

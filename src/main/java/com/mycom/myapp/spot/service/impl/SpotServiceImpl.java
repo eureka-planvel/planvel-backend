@@ -31,4 +31,14 @@ public class SpotServiceImpl implements SpotService {
 
         return ResponseWithStatus.ok(CommonResponse.success(dtos, "조회 성공"));
     }
+
+    @Override
+    public ResponseWithStatus<SpotResponseDto> getSpotDetail(int id) {
+        Spot spot = spotRepository.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 스팟입니다."));
+
+        SpotResponseDto dto = SpotResponseDto.from(spot);
+
+        return ResponseWithStatus.ok(CommonResponse.success(dto, "조회 성공"));
+    }
 }

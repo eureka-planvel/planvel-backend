@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface SpotService {
   ResponseWithStatus<List<SpotResponseDto>> getSpotsByRegionAndType(int regionId, SpotType type, int page, int size);
+
+  ResponseWithStatus<SpotResponseDto> getSpotDetail(int id);
 }
