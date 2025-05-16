@@ -4,7 +4,7 @@ import com.mycom.myapp.common.resolver.LoginUser;
 import com.mycom.myapp.common.response.CommonResponse;
 import com.mycom.myapp.common.response.ResponseWithStatus;
 import com.mycom.myapp.user.dto.request.ChangePasswordRequestDto;
-import com.mycom.myapp.user.dto.UserDto;
+import com.mycom.myapp.user.dto.UserInfo;
 import com.mycom.myapp.user.dto.request.UpdateNameRequest;
 import com.mycom.myapp.user.dto.response.UserProfileResponseDto;
 import com.mycom.myapp.user.dto.request.UserRegisterRequestDto;
@@ -36,58 +36,32 @@ public class UserController {
 	}
 
 	@PutMapping("/password")
-	public ResponseEntity<CommonResponse<Void>> changePassword( @RequestBody ChangePasswordRequestDto request, @LoginUser UserDto user) {
+	public ResponseEntity<CommonResponse<Void>> changePassword( @RequestBody ChangePasswordRequestDto request, @LoginUser UserInfo user) {
 		ResponseWithStatus<Void> response = userService.changePassword(request, user);
 		return ResponseEntity.status(response.getStatus()).body(response.getBody());
 	}
 
 	@GetMapping("/profile")
-	public ResponseEntity<CommonResponse<UserProfileResponseDto>> getUserProfile(@LoginUser UserDto user) {
+	public ResponseEntity<CommonResponse<UserProfileResponseDto>> getUserProfile(@LoginUser UserInfo user) {
 		ResponseWithStatus<UserProfileResponseDto> response = userService.getUserProfile(user.getId());
 		return ResponseEntity.status(response.getStatus()).body(response.getBody());
 	}
 
 
 	@PutMapping("/profile/name")
-	public ResponseEntity<CommonResponse<Void>> updateName(@LoginUser UserDto user, @RequestBody UpdateNameRequest request) {
+	public ResponseEntity<CommonResponse<Void>> updateName(@LoginUser UserInfo user, @RequestBody UpdateNameRequest request) {
 		ResponseWithStatus<Void> response = userService.updateUserName(user.getId(), request.getName());
 		return ResponseEntity.status(response.getStatus()).body(response.getBody());
 	}
 
 	@PutMapping(value = "/profile/image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<CommonResponse<UserProfileResponseDto>> updateProfileImage(
-			@LoginUser UserDto user,
+			@LoginUser UserInfo user,
 			@RequestPart("profileImage") MultipartFile profileImage) {
 
 		ResponseWithStatus<UserProfileResponseDto> response = userService.updateProfileImage(user.getId(), profileImage);
 		return ResponseEntity.status(response.getStatus()).body(response.getBody());
 	}
-
-
-
-
-
-
-//	@PutMapping(value = "/profile", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-//	public ResponseEntity<UserProfileResponseDto> updateUserProfile(
-//			Authentication authentication,
-//			@RequestPart(value = "name", required = false) String name,
-//			@RequestPart(value = "profileImage", required = false) MultipartFile profileImage) {
-//
-//		if(authentication == null || !authentication.isAuthenticated() ||
-//				authentication.getPrincipal() instanceof String) {
-//			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-//		}
-//
-//		LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
-//
-//		try {
-//			UserProfileResponseDto updatedProfile = userService.updateUserProfile(loginUser, name, profileImage);
-//			return ResponseEntity.ok(updatedProfile);
-//		} catch (IllegalArgumentException e) {
-//			return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-//		}
-//	}
 
 }
 

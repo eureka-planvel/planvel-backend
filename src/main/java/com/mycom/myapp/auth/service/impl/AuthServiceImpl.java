@@ -1,10 +1,10 @@
 package com.mycom.myapp.auth.service.impl;
 
 import com.mycom.myapp.auth.dto.request.LoginRequestDto;
-import com.mycom.myapp.auth.dto.response.LoginResponseDto;
 import com.mycom.myapp.auth.service.AuthService;
 import com.mycom.myapp.common.response.CommonResponse;
 import com.mycom.myapp.common.response.ResponseWithStatus;
+import com.mycom.myapp.user.dto.UserInfo;
 import com.mycom.myapp.user.entity.User;
 import com.mycom.myapp.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;
@@ -42,16 +42,10 @@ public class AuthServiceImpl implements AuthService {
             return ResponseWithStatus.unauthorized(CommonResponse.fail("이메일 또는 비밀번호가 일치하지 않습니다."));
         }
 
-        LoginResponseDto userDto = LoginResponseDto.builder()
-                .id(user.getId())
-                .name(user.getName())
-                .email(user.getEmail())
-                .profileImg(user.getProfileImg())
-                .build();
-
+        UserInfo userInfo = UserInfo.fromEntity(user);
 
         UsernamePasswordAuthenticationToken authentication =
-                new UsernamePasswordAuthenticationToken(userDto, null, Collections.emptyList());
+            new UsernamePasswordAuthenticationToken(userInfo, null, Collections.emptyList());
 
         authentication.setDetails(new WebAuthenticationDetails(((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest()));
 

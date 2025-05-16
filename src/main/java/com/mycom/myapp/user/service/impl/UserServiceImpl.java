@@ -2,7 +2,7 @@ package com.mycom.myapp.user.service.impl;
 
 import com.mycom.myapp.common.response.CommonResponse;
 import com.mycom.myapp.common.response.ResponseWithStatus;
-import com.mycom.myapp.user.dto.UserDto;
+import com.mycom.myapp.user.dto.UserInfo;
 import com.mycom.myapp.user.dto.request.ChangePasswordRequestDto;
 import com.mycom.myapp.user.dto.request.UserRegisterRequestDto;
 import com.mycom.myapp.user.dto.response.UserProfileResponseDto;
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public ResponseWithStatus<Void> changePassword(ChangePasswordRequestDto request, UserDto currentUser) {
+	public ResponseWithStatus<Void> changePassword(ChangePasswordRequestDto request, UserInfo currentUser) {
 		Optional<User> userOpt = userRepository.findById(currentUser.getId());
 		if (userOpt.isEmpty()) {
 			return ResponseWithStatus.badRequest(CommonResponse.fail("사용자를 찾을 수 없습니다."));

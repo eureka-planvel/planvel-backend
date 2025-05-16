@@ -1,20 +1,29 @@
 package com.mycom.myapp.review.service;
 
 import com.mycom.myapp.auth.dto.response.LoginResponseDto;
+import com.mycom.myapp.common.response.ResponseWithStatus;
 import com.mycom.myapp.review.dto.*;
 
+import com.mycom.myapp.user.dto.UserInfo;
 import java.util.List;
 
 public interface ReviewService {
-    ReviewResponseDto writeReview(ReviewRequestDto requestDto, LoginResponseDto loginUser);
-    ReviewResponseDto updateReview(int reviewId, LoginResponseDto loginUser, ReviewUpdateRequestDto dto);
-    LikeResponseDto likeReview(int reviewId, LoginResponseDto loginUser);
-    List<ReviewResponseDto> getAllReviewsSortedByLikes();
+    
+    ResponseWithStatus<Void> writeReview(ReviewRequestDto requestDto, UserInfo user);
 
-    void deleteReview(int reviewId, LoginResponseDto loginUser);
+    ResponseWithStatus<Void> updateReview(int reviewId, UserInfo userInfo, ReviewUpdateRequestDto dto);
 
-    List<ReviewResponseDto> getReviewsByRegionSortedByLikes(int regionId);
+    ResponseWithStatus<LikeResponseDto> addLike(int reviewId, UserInfo userInfo);
 
-    List<ReviewResponseDto> getMyReviews(LoginResponseDto loginUser);
+    ResponseWithStatus<LikeResponseDto> removeLike(int reviewId, UserInfo userInfo);
+    
+    ResponseWithStatus<Void> deleteReview(int reviewId, UserInfo userInfo);
 
+    ResponseWithStatus<List<ReviewResponseDto>> getReviewsByRegionSortedByCreatedAt(int regionId);
+
+    ResponseWithStatus<List<ReviewResponseDto>> getReviewsByRegionSortedByLikes(int regionId);
+
+    ResponseWithStatus<List<ReviewResponseDto>> getTop5ReviewsSortedByLikes();
+
+    ResponseWithStatus<List<ReviewResponseDto>> getMyReviews(int id);
 }

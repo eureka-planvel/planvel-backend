@@ -1,6 +1,6 @@
 package com.mycom.myapp.common.resolver;
 
-import com.mycom.myapp.user.dto.UserDto;
+import com.mycom.myapp.user.dto.UserInfo;
 import org.springframework.core.MethodParameter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,7 +14,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
   @Override
   public boolean supportsParameter(MethodParameter parameter) {
     return parameter.hasParameterAnnotation(LoginUser.class) &&
-        parameter.getParameterType().equals(UserDto.class);
+        parameter.getParameterType().equals(UserInfo.class);
   }
 
   @Override
@@ -29,7 +29,7 @@ public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver 
       throw new IllegalStateException("인증되지 않은 사용자입니다.");
     }
 
-    return (UserDto) authentication.getPrincipal();
+    return (UserInfo) authentication.getPrincipal();
   }
 }
 

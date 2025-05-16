@@ -8,14 +8,14 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 @Builder
-public class UserDto {
+public class UserInfo {
   private final int id;
   private final String email;
   private final String name;
   private final String profileImg;
 
-  public static UserDto fromEntity(User user) {
-    return UserDto.builder()
+  public static UserInfo fromEntity(User user) {
+    return UserInfo.builder()
         .id(user.getId())
         .email(user.getEmail())
         .name(user.getName())

@@ -27,6 +27,10 @@ public class ResponseWithStatus<T> {
     return new ResponseWithStatus<>(HttpStatus.UNAUTHORIZED, body);
   }
 
+  public static <T> ResponseWithStatus<T> forbidden(CommonResponse<T> body) {
+    return new ResponseWithStatus<>(HttpStatus.FORBIDDEN, body);
+  }
+
   public HttpStatus getStatus() {
     return status;
   }
