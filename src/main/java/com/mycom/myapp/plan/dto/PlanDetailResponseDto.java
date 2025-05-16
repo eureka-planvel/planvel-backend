@@ -18,7 +18,6 @@ public class PlanDetailResponseDto {
   private String endDate;
   private String transport;
   private String accommodation;
-
   private List<ScheduleDto> schedule;
 
   @Getter
@@ -27,6 +26,17 @@ public class PlanDetailResponseDto {
   @NoArgsConstructor
   public static class ScheduleDto {
     private int day;
-    private List<String> spots;
+    private List<SpotDto> spots;
+  }
+
+  @Getter
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class SpotDto {
+    private String spotName;
+    private String imageUrl;
+    private String regionName;
+    private String address;
   }
 }

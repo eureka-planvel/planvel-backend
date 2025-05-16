@@ -34,7 +34,7 @@ public class TravelPlanServiceImpl implements TravelPlanService {
   @Transactional
   @Override
   public ResponseWithStatus<Void> saveTravelPlan(int userId, PlanSaveRequestDto requestDto) {
-    // 1. TravelPlan 생성 및 저장
+
     PlanSaveRequestDto.TravelInfo info = requestDto.getTravelInfo();
     if (info == null || info.getDepartureId() == null || info.getArrivalId() == null) {
       return ResponseWithStatus.badRequest(CommonResponse.fail("필수 여행 정보 없음"));
@@ -69,7 +69,6 @@ public class TravelPlanServiceImpl implements TravelPlanService {
 
       travelPlanRepository.save(plan);
 
-      // 2. TravelSchedule 저장
       requestDto.getScheduleData().forEach((date, spots) -> {
         spots.forEach(spot -> {
           TravelSchedule schedule = new TravelSchedule();
@@ -119,11 +118,9 @@ public class TravelPlanServiceImpl implements TravelPlanService {
     TravelPlan plan = travelPlanRepository.findByCode(code)
         .orElseThrow(() -> new IllegalArgumentException("해당하는 여행 계획이 없습니다."));
 
-    // 일정 날짜 기준 Grouping -> Map<LocalDate, List<TravelSchedule>>
     Map<LocalDate, List<TravelSchedule>> groupedSchedules = plan.getSchedules().stream()
         .collect(Collectors.groupingBy(TravelSchedule::getScheduleDate));
 
-    // 날짜별로 day 번호 붙이기 (1일차부터)
     List<PlanDetailResponseDto.ScheduleDto> scheduleDtoList = new ArrayList<>();
     List<LocalDate> sortedDates = groupedSchedules.keySet().stream()
         .sorted()
@@ -131,13 +128,19 @@ public class TravelPlanServiceImpl implements TravelPlanService {
 
     for (int i = 0; i < sortedDates.size(); i++) {
       LocalDate date = sortedDates.get(i);
-      List<String> spotNames = groupedSchedules.get(date).stream()
-          .map(TravelSchedule::getSpotName)
+
+      List<PlanDetailResponseDto.SpotDto> spots = groupedSchedules.get(date).stream()
+          .map(schedule -> PlanDetailResponseDto.SpotDto.builder()
+              .spotName(schedule.getSpotName())
+              .imageUrl(schedule.getImageUrl())
+              .regionName(schedule.getRegionName())
+              .address(schedule.getAddress())
+              .build())
           .collect(Collectors.toList());
 
       PlanDetailResponseDto.ScheduleDto dto = PlanDetailResponseDto.ScheduleDto.builder()
-          .day(i + 1)  // 1일차부터
-          .spots(spotNames)
+          .day(i + 1)
+          .spots(spots)
           .build();
 
       scheduleDtoList.add(dto);
@@ -156,6 +159,7 @@ public class TravelPlanServiceImpl implements TravelPlanService {
 
     return ResponseWithStatus.ok(CommonResponse.success(detailDto, "상세 조회 성공"));
   }
+
 
   private String generateRandomCode() {
     return UUID.randomUUID().toString().replace("-", "").substring(0, 8).toUpperCase();
