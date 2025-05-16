@@ -1,4 +1,4 @@
-package com.mycom.myapp.config;
+package com.mycom.myapp.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,15 +20,14 @@ public class SecurityConfig {
 		return http
 				.authorizeHttpRequests(request -> request
 						.requestMatchers(
-								"/api/user/register",
-								"/api/user/email-check",
-								"/api/auth/login",
-								"/api/auth/logout",
-								"/api/review",
-								"/api/review/*",
-								"/api/regions",
-								"/api/stay/**",
-								"/api/spot/**"
+								"/user/register",
+								"/user/email-check",
+								"/auth/login",
+								"/review",
+								"/review/*",
+								"/regions",
+								"/stay/**",
+								"/spot/**"
 						).permitAll()
 						.anyRequest().authenticated()
 				)

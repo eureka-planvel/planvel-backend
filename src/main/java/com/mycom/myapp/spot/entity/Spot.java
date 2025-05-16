@@ -1,6 +1,7 @@
 package com.mycom.myapp.spot.entity;
 
 import com.mycom.myapp.region.entity.Region;
+import com.mycom.myapp.spot.entity.type.SpotType;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -26,7 +27,9 @@ public class Spot {
     @Column(nullable = false)
     private String address;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private SpotType type;
 
     @Column(name="image_url")
     private String imageUrl;
