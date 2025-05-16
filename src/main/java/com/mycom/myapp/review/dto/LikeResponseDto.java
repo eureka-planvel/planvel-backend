@@ -8,4 +8,11 @@ import lombok.Getter;
 public class LikeResponseDto {
     private boolean liked;
     private int likesCount;
+
+    public static LikeResponseDto of(boolean liked, int likesCount) {
+        return LikeResponseDto.builder()
+            .liked(liked)
+            .likesCount(likesCount)
+            .build();
+    }
 }

@@ -27,9 +27,10 @@ public class Accommodation {
 
     private String pricePerNight;
 
-    private String type;
-
     private String imageUrl;
 
     private String thumbnailUrl;
+
+    @Column(name = "is_hotel")
+    private boolean isHotel;
 }

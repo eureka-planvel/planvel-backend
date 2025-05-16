@@ -1,126 +1,105 @@
 package com.mycom.myapp.review.controller;
 
-import com.mycom.myapp.auth.dto.response.LoginResponseDto;
-import com.mycom.myapp.review.dto.*;
+import com.mycom.myapp.common.resolver.LoginUser;
+import com.mycom.myapp.common.response.CommonResponse;
+import com.mycom.myapp.common.response.ResponseWithStatus;
+import com.mycom.myapp.review.dto.LikeResponseDto;
+import com.mycom.myapp.review.dto.ReviewRequestDto;
+import com.mycom.myapp.review.dto.ReviewResponseDto;
+import com.mycom.myapp.review.dto.ReviewUpdateRequestDto;
 import com.mycom.myapp.review.service.ReviewService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-
+import com.mycom.myapp.user.dto.UserInfo;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/review")
+@RequestMapping("/review")
 @RequiredArgsConstructor
-@Tag(name = "Review", description = "리뷰 관련 API")
 public class ReviewController {
 
     private final ReviewService reviewService;
 
-    @Operation(summary = "리뷰 작성", description = "새로운 리뷰를 작성합니다.")
     @PostMapping
-    public ResponseEntity<ReviewResponseDto> writeReview(@RequestBody ReviewRequestDto requestDto,
-                                                         Authentication authentication) {
-
-        if (authentication == null || !authentication.isAuthenticated() ||
-                authentication.getPrincipal() instanceof String) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
-
-        ReviewResponseDto responseDto = reviewService.writeReview(requestDto, loginUser);
-
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseDto);
+    public ResponseEntity<CommonResponse<Void>> writeReview(
+        @RequestBody ReviewRequestDto requestDto, @LoginUser UserInfo userInfo){
+        ResponseWithStatus<Void> response = reviewService.writeReview(requestDto, userInfo);
+        return ResponseEntity.status(response.getStatus()).body(response.getBody());
     }
 
-    @Operation(summary = "리뷰 수정", description = "리뷰 ID로 리뷰를 수정합니다.")
     @PutMapping("/{review_id}")
-    public ResponseEntity<ReviewResponseDto> updateReview(
+    public ResponseEntity<CommonResponse<Void>> updateReview(
             @PathVariable("review_id") int reviewId,
             @RequestBody ReviewUpdateRequestDto dto,
-            Authentication authentication) {
+            @LoginUser UserInfo userInfo) {
 
-        if(authentication == null || !authentication.isAuthenticated() ||
-                authentication.getPrincipal() instanceof String) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
-
-        try {
-            ReviewResponseDto updatedReview = reviewService.updateReview(reviewId, loginUser, dto);
-            return ResponseEntity.ok(updatedReview);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-    }
-
-    @Operation(summary = "리뷰 좋아요", description = "특정 리뷰에 좋아요를 누릅니다.")
-    @PostMapping("/like/{reviewId}")
-    public ResponseEntity<LikeResponseDto> likeReview(@PathVariable int reviewId,
-                                                      Authentication authentication) {
-
-        if (authentication == null || !authentication.isAuthenticated() ||
-                authentication.getPrincipal() instanceof String) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
-
-        LikeResponseDto response = reviewService.likeReview(reviewId, loginUser);
-        return ResponseEntity.ok(response);
-    }
-
-    @Operation(summary = "모든 리뷰 조회", description = "좋아요 순으로 정렬된 모든 리뷰를 조회합니다.")
-    @GetMapping
-    public ResponseEntity<List<ReviewResponseDto>> getAllReviews() {
-        List<ReviewResponseDto> reviews = reviewService.getAllReviewsSortedByLikes();
-        return ResponseEntity.ok(reviews);
-    }
-
-    @Operation(summary = "리뷰 삭제", description = "특정 리뷰를 삭제합니다.")
-    @DeleteMapping("/{review_id}")
-    public ResponseEntity<Void> deleteReview(@PathVariable("review_id") int reviewId,
-                                             Authentication authentication) {
-
-        if (authentication == null || !authentication.isAuthenticated() ||
-                authentication.getPrincipal() instanceof String) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-        }
-
-        LoginResponseDto loginUser = (LoginResponseDto) authentication.getPrincipal();
-
-        try {
-            reviewService.deleteReview(reviewId, loginUser);
-            return ResponseEntity.ok().build();
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } catch (SecurityException e) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-        }
-    }
-
-    @Operation(summary = "지역별 리뷰 조회", description = "특정 지역 ID의 리뷰를 좋아요 순으로 조회합니다.")
-    @GetMapping("/{region_id}")
-    public ResponseEntity<List<ReviewResponseDto>> getReviewsByRegion(@PathVariable("region_id") int regionId) {
-        List<ReviewResponseDto> reviews = reviewService.getReviewsByRegionSortedByLikes(regionId);
-        return ResponseEntity.ok(reviews);
+        ResponseWithStatus<Void> response = reviewService.updateReview(reviewId, userInfo, dto);
+        return ResponseEntity.status(response.getStatus()).body(response.getBody());
 
     }
 
-    @Operation(summary = "내가 작성한 리뷰 조회", description = "로그인한 사용자가 작성한 리뷰를 조회합니다.")
+    @PostMapping("/{reviewId}/like")
+    public ResponseEntity<CommonResponse<LikeResponseDto>> likeReview(
+        @PathVariable int reviewId,
+        @LoginUser UserInfo userInfo) {
+
+        ResponseWithStatus<LikeResponseDto> response = reviewService.addLike(reviewId, userInfo);
+        return ResponseEntity.status(response.getStatus()).body(response.getBody());
+    }
+
+    @DeleteMapping("/{reviewId}/like")
+    public ResponseEntity<CommonResponse<LikeResponseDto>> unlikeReview(
+        @PathVariable int reviewId,
+        @LoginUser UserInfo userInfo) {
+
+        ResponseWithStatus<LikeResponseDto> response = reviewService.removeLike(reviewId, userInfo);
+        return ResponseEntity.status(response.getStatus()).body(response.getBody());
+    }
+
+    @GetMapping("/region/{regionId}")
+    public ResponseEntity<CommonResponse<List<ReviewResponseDto>>> getReviewsByRegion(@PathVariable int regionId) {
+        ResponseWithStatus<List<ReviewResponseDto>> response = reviewService.getReviewsByRegionSortedByCreatedAt(regionId);
+        return ResponseEntity.status(response.getStatus()).body(response.getBody());
+    }
+
+
+    @GetMapping("/region/{regionId}/popular")
+    public ResponseEntity<CommonResponse<List<ReviewResponseDto>>> getPopularReviewsByRegion(@PathVariable int regionId) {
+        ResponseWithStatus<List<ReviewResponseDto>> response = reviewService.getReviewsByRegionSortedByLikes(regionId);
+        return ResponseEntity.status(response.getStatus()).body(response.getBody());
+    }
+
+
+    @GetMapping("/popular") // 5개만
+    public ResponseEntity<CommonResponse<List<ReviewResponseDto>>> getPopularReviews() {
+        ResponseWithStatus<List<ReviewResponseDto>> response = reviewService.getTop5ReviewsSortedByLikes();
+        return ResponseEntity.status(response.getStatus()).body(response.getBody());
+    }
+
+
+
+    @DeleteMapping("/{reviewId}")
+    public ResponseEntity<CommonResponse<Void>> deleteReview(
+        @PathVariable int reviewId,
+        @LoginUser UserInfo userInfo) {
+
+        ResponseWithStatus<Void> response = reviewService.deleteReview(reviewId, userInfo);
+        return ResponseEntity.status(response.getStatus()).body(response.getBody());
+    }
+
+
+
     @GetMapping("/my")
-    public ResponseEntity<List<ReviewResponseDto>> getMyReviews(@AuthenticationPrincipal LoginResponseDto loginUser) {
-        List<ReviewResponseDto> myReviews = reviewService.getMyReviews(loginUser);
-        return ResponseEntity.ok(myReviews);
-
+    public ResponseEntity<CommonResponse<List<ReviewResponseDto>>> getMyReviews(@LoginUser UserInfo userInfo) {
+        ResponseWithStatus<List<ReviewResponseDto>> response = reviewService.getMyReviews(userInfo.getId());
+        return ResponseEntity.status(response.getStatus()).body(response.getBody());
     }
 }

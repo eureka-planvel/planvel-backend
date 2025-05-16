@@ -6,6 +6,12 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * Like 엔티티 1개
+ * → User 1명 (user_id)
+ * → Review 1개 (review_id)
+ */
+
 @Entity
 @Table(name = "likes")
 @Getter
@@ -27,5 +33,11 @@ public class Like {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+    }
 }
