@@ -36,3 +36,10 @@ out/
 
 ### VS Code ###
 .vscode/
+
+
+.env
+src/main/resources/application-secret.yml
+.DS_Store
+
+.gitkeep
